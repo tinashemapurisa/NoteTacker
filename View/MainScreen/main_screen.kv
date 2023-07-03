@@ -1,0 +1,196 @@
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+<MainScreenView>:
+	id:main
+    ScreenManager:
+        id:manager
+        transition:
+            FadeTransition(duration=.2, clearcolor=app.theme_cls.bg_dark)
+		Screen:
+			name:'home'
+			on_enter: 
+				list.clear_widgets()
+				main.display_notes()
+			MDBoxLayout:
+				orientation: 'vertical'
+				MDTopAppBar:
+				    title:"NotesTacker"
+                    anchor_title:"left"
+				    elevation:0
+				    md_bg_color:app.theme_cls.bg_normal
+				    specific_text_color:app.theme_cls.text_color
+
+				MDBoxLayout:
+				    orientation:'vertical'
+                    FloatLayout:
+                        FitImage:
+                            id:indicator
+                            source: "assets/images/no notes.png"
+                            pos_hint: {'center_x': .5,'center_y':.5}
+                            size_hint: (None, None)
+                            size:200,200
+                            opacity: 0
+
+    				    ScrollView:
+                            pos_hint: {'center_x': .5,'center_y':.5}
+
+    				        MDGridLayout:
+    				            adaptive_height:True
+    				            cols:2
+    				            spacing:16
+                                padding:20
+                                id:list
+			MDFloatingActionButton:
+				icon:"plus"
+				type:"standard"
+				pos_hint: {'center_x': .8,'center_y':.1}
+				size_hint:None,None
+				size:80,80
+                on_press :manager.current="view"
+                shadow_color:app.theme_cls.bg_darkest
+                shadow_softness :24
+
+    	Screen:
+    		name:"view"
+    		on_leave:
+    			title.text =""
+    			content.text =""
+    		MDBoxLayout:
+    		    orientation: 'vertical'
+    		    md_bg_color:app.theme_cls.bg_light
+
+    			MDTopAppBar:
+                    id:v_toolbar
+    			    title:"Save Note "
+    			    md_bg_color:app.theme_cls.bg_light
+                    specific_text_color:app.theme_cls.text_color
+    			ScrollView:
+    			    always_overscroll:False
+    			    MDBoxLayout:
+    			        adaptive_height:True
+    			        spacing:20
+    			        padding:16
+    			        md_bg_color:app.theme_cls.bg_light
+    			        orientation:"vertical"
+    			        MDTextField:
+    			        	id:title
+    			            mode:"rectangle"
+    			            hint_text:"Note Title............" 
+                            on_text_validate:
+                                content.focus=True
+                                
+    			        MDTextField:
+                            id:content
+    			            mode:"rectangle"
+    			            multiline:True
+    			            hint_text:"Content........... "
+    			        MDBoxLayout:
+    			            orientation: 'horizontal'
+    			            adaptive_height:True
+    			            spacing:16  
+    			            MDRoundFlatButton:
+    			                text:"Cancel"
+    			                size_hint_y:1
+    			                size_hint_x:.4
+                                on_press :manager.current="home"
+
+
+    			            MDFillRoundFlatButton:
+    			            	id:su
+    			                text:"Save Note "
+    			                size_hint_x:.6
+    			                size_hint_y:1
+                                on_press:main.save()
+
+        Screen:
+            name:"edit"
+            on_leave:
+                title_view.text =""
+                content_view.text =""
+            MDBoxLayout:
+                orientation: 'vertical'
+                md_bg_color:app.theme_cls.bg_light
+
+                MDTopAppBar:
+                    id:e_toolbar
+                    title:"filename"
+                    md_bg_color:app.theme_cls.bg_light
+                    specific_text_color:app.theme_cls.text_color
+                ScrollView:
+                    always_overscroll:False
+                    MDBoxLayout:
+                        adaptive_height:True
+                        spacing:20
+                        padding:16
+                        md_bg_color:app.theme_cls.bg_light
+                        orientation:"vertical"
+                        MDTextField:
+                            id:title_view
+                            mode:"rectangle"
+                            hint_text:"Note Title............" 
+                            on_text_validate:
+                                content_view.focus=True
+                                
+                        MDTextField:
+                            id:content_view
+                            mode:"rectangle"
+                            multiline:True
+                            hint_text:"Content........... "
+                        MDBoxLayout:
+                            orientation: 'horizontal'
+                            adaptive_height:True
+                            spacing:16  
+                            MDRoundFlatButton:
+                                text:"Cancel"
+                                size_hint_y:1
+                                size_hint_x:.4
+                                on_press :manager.current="home"
+
+
+                            MDFillRoundFlatButton:
+                                id:update_btn
+                                text: "Update Note"
+                                size_hint_x:.6
+                                size_hint_y:1
+
+<ContentCard>:
+    id:card
+    title:""
+    content:""
+    date:""
+    size_hint_y:None
+    height: 250
+    padding:20
+    elevation:1
+    shadow_color:app.theme_cls.bg_darkest
+    FloatLayout:
+
+        MDIconButton:
+            id:delete_btn
+            icon:"trash-can"
+            pos_hint: {'center_x': .9,"center_y":.1}
+        MDBoxLayout:
+            orientation: 'vertical'
+            pos_hint: {'center_x': .5,"center_y":.5}
+
+            MDLabel:
+                id:title
+                text:f'{card.title}'
+                bold:True
+                font_size:"20sp"
+                cap: 'round'
+
+            MDLabel:
+                id:content
+                text:f'{card.content}'
+                font_size:"15sp"
+                shorten: True
+                markup: True
+
+            MDSeparator:
+            MDLabel:
+                id:date
+                text:f'{card.date}'
+                font_size:"12sp"
+                theme_text_color:"Hint"
+
